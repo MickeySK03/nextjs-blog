@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-heading: "Syne", sans-serif;
+    --font-body: "DM Sans", sans-serif;
+  }
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateX(calc(100% + 20px));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes toastOut {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+    max-height: 200px;
+    margin-bottom: 0;
+  }
+  to {
+    opacity: 0;
+    transform: translateX(calc(100% + 20px));
+    max-height: 0;
+    margin-bottom: -12px;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-lg font-medium transition-colors;
+  }
+  .btn-secondary {
+    @apply bg-slate-700 hover:bg-slate-600 text-slate-200 px-4 py-2 rounded-lg font-medium transition-colors;
+  }
+  .btn-danger {
+    @apply bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-colors;
+  }
+  .card {
+    @apply bg-slate-800 border border-slate-700 rounded-xl p-6;
+  }
+  .input {
+    @apply w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 
+           placeholder:text-slate-500 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500;
+  }
+  .label {
+    @apply block text-sm font-medium text-slate-300 mb-1.5;
+  }
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+}

@@ -1,0 +1,168 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  // url      = env("DATABASE_URL")
+}
+
+// ========================
+// ROLE & PERMISSION
+// ========================
+model Role {
+  id          Int          @id @default(autoincrement())
+  name        String       @unique @db.VarChar(50)
+  description String?      @db.Text
+  permissions Permission[]
+  users       User[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@map("roles")
+}
+
+model Permission {
+  id        Int      @id @default(autoincrement())
+  action    String   @db.VarChar(100) // e.g. "create", "read", "update", "delete"
+  subject   String   @db.VarChar(100) // e.g. "user", "banner", "content"
+  role      Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  roleId    Int
+  createdAt DateTime @default(now())
+
+  @@unique([action, subject, roleId])
+  @@map("permissions")
+}
+
+// ========================
+// USER
+// ========================
+model User {
+  id        Int       @id @default(autoincrement())
+  name      String    @db.VarChar(100)
+  email     String    @unique @db.VarChar(255)
+  password  String    @db.VarChar(255)
+  avatar    String?   @db.VarChar(500)
+  isActive  Boolean   @default(true)
+  role      Role      @relation(fields: [roleId], references: [id])
+  roleId    Int
+  sessions  Session[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("users")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@map("sessions")
+}
+
+// ========================
+// BANNER
+// ========================
+model Banner {
+  id          Int            @id @default(autoincrement())
+  title       String         @db.VarChar(200)
+  description String?        @db.Text
+  imageUrl    String         @db.VarChar(500)
+  linkUrl     String?        @db.VarChar(500)
+  position    BannerPosition @default(HOME_TOP)
+  isActive    Boolean        @default(true)
+  sortOrder   Int            @default(0)
+  startDate   DateTime?
+  endDate     DateTime?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@map("banners")
+}
+
+enum BannerPosition {
+  HOME_TOP
+  HOME_MIDDLE
+  HOME_BOTTOM
+  SIDEBAR
+}
+
+// ========================
+// CONTENT MANAGEMENT
+// ========================
+model Category {
+  id          Int       @id @default(autoincrement())
+  name        String    @db.VarChar(100)
+  slug        String    @unique @db.VarChar(100)
+  description String?   @db.Text
+  contents    Content[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("categories")
+}
+
+model Content {
+  id          Int           @id @default(autoincrement())
+  title       String        @db.VarChar(300)
+  slug        String        @unique @db.VarChar(300)
+  excerpt     String?       @db.Text
+  body        String        @db.LongText
+  coverImage  String?       @db.VarChar(500)
+  status      ContentStatus @default(DRAFT)
+  isFeatured  Boolean       @default(false)
+  viewCount   Int           @default(0)
+  category    Category?     @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  categoryId  Int?
+  tags        ContentTag[]
+  publishedAt DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@map("contents")
+}
+
+enum ContentStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model Tag {
+  id       Int          @id @default(autoincrement())
+  name     String       @unique @db.VarChar(50)
+  slug     String       @unique @db.VarChar(50)
+  contents ContentTag[]
+
+  @@map("tags")
+}
+
+model ContentTag {
+  content   Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  contentId Int
+  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  tagId     Int
+
+  @@id([contentId, tagId])
+  @@map("content_tags")
+}
+
+// ========================
+// MEDIA / FILE UPLOAD
+// ========================
+model Media {
+  id        Int      @id @default(autoincrement())
+  filename  String   @db.VarChar(255)
+  url       String   @db.VarChar(500)
+  mimeType  String   @db.VarChar(100)
+  size      Int
+  alt       String?  @db.VarChar(255)
+  createdAt DateTime @default(now())
+
+  @@map("media")
+}
