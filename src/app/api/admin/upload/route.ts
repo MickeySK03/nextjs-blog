@@ -6,8 +6,12 @@ import { writeFile, mkdir } from "fs/promises";
 import { existsSync } from "fs";
 import path from "path";
 
-const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_SIZE = 10 * 1024 * 1024; // 10MB
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/svg+xml"];
+
+// Increase body size limit for this route
+export const runtime = "nodejs";
+export const maxDuration = 30; // 30 seconds timeout
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -34,7 +38,7 @@ export async function POST(req: NextRequest) {
   // Validate size
   if (file.size > MAX_SIZE) {
     return NextResponse.json(
-      { message: `File too large. Maximum size is 5MB` },
+      { message: `File too large. Maximum size is 10MB` },
       { status: 400 }
     );
   }
@@ -63,8 +67,3 @@ export async function POST(req: NextRequest) {
     mimeType: file.type,
   });
 }
-
-// Allow large payloads
-export const config = {
-  api: { bodyParser: false },
-};

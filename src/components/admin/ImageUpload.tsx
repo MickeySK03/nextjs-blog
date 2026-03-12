@@ -11,7 +11,7 @@ interface ImageUploadProps {
   error?: string;
 }
 
-const MAX_MB = 5;
+const MAX_MB = 10;
 const ACCEPTED = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/svg+xml"];
 const ACCEPTED_EXT = ".jpg,.jpeg,.png,.webp,.gif,.svg";
 

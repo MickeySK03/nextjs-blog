@@ -238,3 +238,50 @@ catch (err) {
   error("Failed to delete", errorObj.message || "Something went wrong");
 }
 ```
+
+
+## Rich Text Editor (Quill)
+
+### Usage with Controller
+
+```typescript
+<Controller
+  control={control}
+  name="body"
+  render={({ field }) => (
+    <RichTextEditor
+      value={field.value}
+      onChange={field.onChange}
+      placeholder="Write your content here..."
+      error={errors.body?.message}
+    />
+  )}
+/>
+```
+
+### RichTextEditor Props
+
+```typescript
+interface RichTextEditorProps {
+  value: string;              // HTML content
+  onChange: (value: string) => void;  // Callback when content changes
+  placeholder?: string;       // Placeholder text
+  error?: string;            // Error message to display
+}
+```
+
+### Features
+
+- WYSIWYG HTML editor with Quill
+- Dark theme matching admin dashboard
+- Toolbar: headers, bold, italic, underline, strike, lists, alignment, links, images
+- Controlled component pattern (works with react-hook-form)
+- Automatic sync between form state and editor content
+- Error display support
+
+### Important Notes
+
+- Editor returns HTML string
+- Empty content is stored as empty string (not `<p><br></p>`)
+- Use with Controller, not register
+- Content is validated by zod schema

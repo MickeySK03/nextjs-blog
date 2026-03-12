@@ -38,9 +38,11 @@ export default function ContentForm({ defaultValues, categories }: ContentFormPr
     control,
     watch,
     setValue,
+    trigger,
     formState: { errors, isSubmitting, isDirty },
   } = useForm<ContentFormValues>({
     resolver: zodResolver(contentSchema),
+    mode: "onChange",
     defaultValues: {
       title: defaultValues?.title ?? "",
       slug: defaultValues?.slug ?? "",
@@ -150,13 +152,21 @@ export default function ContentForm({ defaultValues, categories }: ContentFormPr
           <label className="label">
             Body <span className="text-red-400">*</span>
           </label>
-          <textarea
-            {...register("body")}
-            className={`input min-h-60 resize-y ${errors.body ? "border-red-500" : ""}`}
-            placeholder="Full content goes here..."
+          <Controller
+            control={control}
+            name="body"
+            render={({ field }) => (
+              <RichTextEditor
+                value={field.value}
+                onChange={(value) => {
+                  field.onChange(value);
+                  trigger("body");
+                }}
+                placeholder="Write your content here..."
+                error={errors.body?.message}
+              />
+            )}
           />
-          <RichTextEditor />
-          {errors.body && <FieldError message={errors.body.message} />}
         </div>
       </section>
 
