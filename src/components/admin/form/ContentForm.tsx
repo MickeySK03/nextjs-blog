@@ -6,6 +6,7 @@ import { z } from "zod";
 import { useToast } from "@/components/providers/ToastProvider";
 import ImageUpload from "@/components/admin/ImageUpload";
 import { createContent, editContent } from "@/app/admin/contents/actions";
+import RichTextEditor from "@/components/text-editor/Quill";
 
 const contentSchema = z.object({
   title: z.string().min(1, "Title is required").max(300, "Title must be 300 characters or less"),
@@ -153,6 +154,7 @@ export default function ContentForm({ defaultValues, categories }: ContentFormPr
             className={`input min-h-60 resize-y ${errors.body ? "border-red-500" : ""}`}
             placeholder="Full content goes here..."
           />
+          <RichTextEditor />
           {errors.body && <FieldError message={errors.body.message} />}
         </div>
       </section>
