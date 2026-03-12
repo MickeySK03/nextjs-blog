@@ -54,7 +54,7 @@ export default function ContentForm({ defaultValues, categories }: ContentFormPr
     },
   });
 
-  const titleValue = watch("title");
+
 
   function generateSlug(title: string) {
     return title
@@ -78,10 +78,11 @@ export default function ContentForm({ defaultValues, categories }: ContentFormPr
       );
       router.push("/admin/contents");
     } catch (err) {
+      const error = err as { message?: string };
       console.error(err);
       toastError(
         isEdit ? "Failed to update content" : "Failed to create content",
-        "Something went wrong. Please try again."
+        error.message || "Something went wrong. Please try again."
       );
     }
   }

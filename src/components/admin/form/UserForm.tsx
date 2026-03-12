@@ -5,13 +5,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useToast } from "@/components/providers/ToastProvider";
 import { createUser, editUser } from "@/app/admin/user/actions";
-import Error from "next/error";
-import AlertModal from "@/components/ui/AlertModal";
-import { useState } from "react";
 
 const userSchema = z.object({
   name: z.string().min(1, "Name is required").max(100, "Name must be 100 characters or less"),
-  email: z.string().email("Must be a valid email"),
+  email: z.string().min(1, "Email is required").email("Must be a valid email"),
   password: z.string().min(6, "Password must be at least 6 characters").optional().or(z.literal("")),
   roleId: z.number().min(1, "Please select a role"),
   isActive: z.boolean(),
@@ -27,7 +24,6 @@ interface UserFormProps {
 export default function UserForm({ defaultValues, roles }: UserFormProps) {
   const router = useRouter();
   const { success, error: toastError } = useToast();
-  const [showModal, setShowModal] = useState(false);
   const isEdit = !!defaultValues?.id;
 
   const {
@@ -60,9 +56,9 @@ export default function UserForm({ defaultValues, roles }: UserFormProps) {
       );
       router.push("/admin/user");
     } catch (err) {
+      console.log(err);
       const submitError = err as  {message?: string, options?: ErrorOptions}
       console.error(err);
-      setShowModal(true)
       toastError(
         isEdit ? "Failed to update user" : "Failed to create user",
         // "Something went wrong. Please try again."
@@ -73,13 +69,6 @@ export default function UserForm({ defaultValues, roles }: UserFormProps) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="max-w-2xl space-y-5" noValidate>
-            <AlertModal
-              isOpen={showModal}
-              onClose={() => setShowModal(false)}
-              title="Delete User"
-              cancelText="Cancel"
-              variant="danger"
-            />
 
       <section className="card space-y-5">
         <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wide">

@@ -19,8 +19,9 @@ export default function DeleteContentButton({ contentId, contentTitle }: { conte
       setShowModal(false);
       router.push("/admin/contents");
     } catch (err) {
+      const errorObj = err as { message?: string };
       console.error(err);
-      error("Failed to delete content", "Something went wrong. Please try again.");
+      error("Failed to delete content", errorObj.message || "Something went wrong. Please try again.");
     } finally {
       setIsDeleting(false);
     }

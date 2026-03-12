@@ -10,7 +10,9 @@ export async function createUser(data: {
   roleId: number;
   isActive: boolean;
 }) {
-  const existing = await prisma.user.findUnique({ where: { email: data.email } });
+  const existing = await prisma.user.findUnique({
+    where: { email: data.email },
+  });
   if (existing) throw new Error("Email already exists");
 
   const hashed = await bcrypt.hash(data.password, 12);
@@ -29,8 +31,12 @@ export async function editUser(
     roleId: number;
     isActive: boolean;
   },
-  id: number
+  id: number,
 ) {
+  if (id === 1) {
+    throw new Error("Cannot edit admin user");
+  }
+
   const updateData: any = {
     name: data.name,
     email: data.email,
@@ -51,6 +57,9 @@ export async function editUser(
 }
 
 export async function deleteUser(id: number) {
+  if (id === 1) {
+    throw new Error("Cannot delete admin user");
+  }
   await prisma.user.delete({ where: { id } });
   revalidatePath("/admin/user");
 }

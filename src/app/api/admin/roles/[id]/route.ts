@@ -38,7 +38,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   const body = await req.json();
   const parsed = roleSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ message: "Invalid data", errors: parsed.error.errors }, { status: 400 });
+    return NextResponse.json({ message: "Invalid data", errors: parsed.error }, { status: 400 });
   }
 
   const id = Number(params.id);

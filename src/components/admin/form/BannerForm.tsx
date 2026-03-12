@@ -78,39 +78,28 @@ export default function BannerForm({ defaultValues }: BannerFormProps) {
     },
   });
 
-  const titleValue = watch("title");
-  console.log(typeof watch('sortOrder'));
 
-  /* ── Submit ──────────────────────────────────────────────── */
+
   async function onSubmit(values: BannerFormValues) {
-    // e.preventDefault();
-    // setLoading(true);
-
-    // const url = isEdit ? `/api/admin/banners/${defaultValues?.id}` : "/api/admin/banners";
-    // const method = isEdit ? "PUT" : "POST";
     try {
-      isEdit ? await editBanner(values, Number(defaultValues.id)) : await createBanner(values)
+      if (isEdit) {
+        await editBanner(values, Number(defaultValues.id));
+      } else {
+        await createBanner(values);
+      }
       success(
         isEdit ? "Banner updated!" : "Banner created!",
         `"${values.title}" has been ${isEdit ? "updated" : "created"} successfully.`
       );
       router.push("/admin/banners");
-      // router.refresh();
     } catch (err) {
-      console.error(err)
+      const error = err as { message?: string };
+      console.error(err);
       toastError(
         isEdit ? "Failed to update banner" : "Failed to create banner",
-        "Something went wrong. Please try again."
+        error.message || "Something went wrong. Please try again."
       );
     }
-    // setLoading(false);
-
-    // if (!res.ok) {
-    //   const data = await res.json();
-    //   setError(data.message || "Something went wrong");
-    // } else {
-    //   router.push("/admin/banners");
-    //   router.refresh();
   }
 
   /* ── UI ──────────────────────────────────────────────────── */

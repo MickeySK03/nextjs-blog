@@ -19,8 +19,9 @@ export default function DeleteBannerButton({ bannerId, bannerTitle }: { bannerId
       setShowModal(false);
       router.refresh();
     } catch (err) {
+      const errorObj = err as { message?: string };
       console.error(err);
-      toastError("Failed to delete banner", "Something went wrong. Please try again.");
+      toastError("Failed to delete banner", errorObj.message || "Something went wrong. Please try again.");
     } finally {
       setIsDeleting(false);
     }

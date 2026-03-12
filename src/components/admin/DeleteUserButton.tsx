@@ -5,7 +5,13 @@ import { deleteUser } from "@/app/admin/user/actions";
 import { useToast } from "@/components/providers/ToastProvider";
 import AlertModal from "@/components/ui/AlertModal";
 
-export default function DeleteUserButton({ userId, userName }: { userId: number; userName: string }) {
+export default function DeleteUserButton({
+  userId,
+  userName,
+}: {
+  userId: number;
+  userName: string;
+}) {
   const router = useRouter();
   const { success, error } = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
@@ -19,8 +25,12 @@ export default function DeleteUserButton({ userId, userName }: { userId: number;
       setShowModal(false);
       router.push("/admin/user");
     } catch (err) {
+      const errorObj = err as { message?: string };
       console.error(err);
-      error("Failed to delete user", "Something went wrong. Please try again.");
+      error(
+        "Failed to delete user",
+        errorObj.message || "Something went wrong. Please try again.",
+      );
     } finally {
       setIsDeleting(false);
     }
@@ -28,7 +38,10 @@ export default function DeleteUserButton({ userId, userName }: { userId: number;
 
   return (
     <>
-      <button onClick={() => setShowModal(true)} className="text-red-400 hover:text-red-300 text-sm">
+      <button
+        onClick={() => setShowModal(true)}
+        className="text-red-400 hover:text-red-300 text-sm"
+      >
         Delete
       </button>
 
